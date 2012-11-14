@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>simplesnap2</title>
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="this is my page">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<script type="text/javascript" src="js/jquery-1.3.2.js"></script>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="snapDiv"></div>
+		<div id="snapBtnsDiv" style="display: none;">
+			<input id="btn1" type="button" value="拍照" onclick="d0shot();" />
+			<input id="btn2" type="button" value="5秒自动拍照" onclick="d5shot();" />
+		</div>
+
+		<div id="snapCommentFormDiv" style="display: none">
+			<a href="javascript:void(0)" onclick="return reset();">不满意，重新拍</a>
+			<input type="button" value="上传" onclick="upload();" />
+		</div>
+
+		<script type="text/javascript">
+		<!--
+			var sec = 5;
+			
+			jQuery(document).ready(function(){
+				var flashVars = {active:"active",complete:"complete",progress:"progress",error:"error",uploadUrl:"./upload.php"};
+				var params = { menu: "false", wmode : "transparent" ,allowScriptAccess: "always"};   
+				swfobject.embedSWF("src/snap.swf","snapDiv","450","395","6","expressInstall.swf",flashVars,params);
+			});
+			
+			function shot(){
+				swfobject.getObjectById("snapDiv").shot();
+				jQuery("#snapBtnsDiv").slideUp("fast");
+				jQuery("#snapCommentFormDiv").slideDown("fast");
+			}
+			
+			function reset(){
+				swfobject.getObjectById("snapDiv").reset();
+				jQuery("#snapCommentFormDiv").slideUp("fast");
+				jQuery("#snapBtnsDiv").slideDown("fast");
+				jQuery("#btn1").removeAttr("disabled");
+				jQuery("#btn2").removeAttr("disabled");
+				return false;
+			}
+			
+			function d0shot(){
+				jQuery("#btn1").attr({"disabled":"disabled"});
+				jQuery("#btn2").attr({"disabled":"disabled"});
+				shot();
+			}
+			
+			function d5shot(){
+				jQuery("#btn2").attr({"disabled":"disabled"});
+				jQuery("#btn1").attr({"disabled":"disabled"});
+				setTimeout("d()", 1000);
+			}
+			
+			function upload(){
+				swfobject.getObjectById("snapDiv").upload();
+			}
+			
+			function d(){
+				if (sec === 0){
+					shot();
+					jQuery("#btn2").attr({"value":"5秒自动拍照"});
+					sec = 5;
+				} else {
+					jQuery("#btn2").attr({"value":""+--sec+"秒自动拍照"});
+					setTimeout("d()", 1000);
+				}
+			}
+			
+			function complete(){
+				alert("ok");
+			}
+			
+			function progress(bytesLoaded,bytesTotal){
+				jQuery("#commentta").val(bytesLoaded);
+			}
+			
+			function active(act){
+				if (act == "ok"){
+					jQuery("#snapBtnsDiv").slideDown("fast");
+				} else {
+					error("选择 允许 才可以在线拍摄照片,<a href='./index.html'>刷新</a>");
+				}
+			}
+			
+			function error(e){
+				alert(e);
+			}
+		//-->
+		</script>
+	</body>
+</html>
