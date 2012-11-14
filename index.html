@@ -28,33 +28,112 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <h3>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+          <h3>描述</h3>
+		  <p>使用flash控制摄像头拍照，上传到服务器，由javascript回调函数控制</p>  
+		  <h3>代码</h3>
+		  <p>使用了jquery和swfobject类库</p>
+		  <pre><code>方法
+function shot();//拍照	
+function reset();//重置	
+参数
+active:function active(act);//flash激活
+complete:function complete();//完成
+progress:function progress(bytesLoaded,bytesTotal);//上传进度
+error:function error(e);//错误
+uploadUrl:上传图片地址
 </code></pre>
+示范<br/>
+&lt;div id="snapDiv"&gt;&lt;/div&gt;<br/>
+&lt;div id="snapBtnsDiv" style="display: none;"&gt;<br/>
+	&lt;input id="btn1" type="button" value="拍照" onclick="d0shot();" /&gt;<br/>
+	&lt;input id="btn2" type="button" value="5秒自动拍照" onclick="d5shot();" /&gt;<br/>
+&lt;/div&gt;<br/>
+&lt;div id="snapCommentFormDiv" style="display: none"&gt;<br/>
+	&lt;a href="javascript:void(0)" onclick="return reset();"&gt;不满意，重新拍&lt;/a&gt;<br/>
+	&lt;input type="button" value="上传" onclick="upload();" /&gt;<br/>
+&lt;/div&gt;<br/>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<pre><code>
+var sec = 5;
 
-<h3>Designer Templates</h3>
+jQuery(document).ready(function(){
+	var flashVars = {active:"active",complete:"complete",progress:"progress",error:"error",uploadUrl:"./upload.php"};
+	var params = { menu: "false", wmode : "transparent" ,allowScriptAccess: "always"};   
+	swfobject.embedSWF("src/snap.swf","snapDiv","450","395","6","expressInstall.swf",flashVars,params);
+});
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+//拍照
+function shot(){
+	swfobject.getObjectById("snapDiv").shot();
+	jQuery("#snapBtnsDiv").slideUp("fast");
+	jQuery("#snapCommentFormDiv").slideDown("fast");
+}
 
-<h3>Rather Drive Stick?</h3>
+//重置
+function reset(){
+	swfobject.getObjectById("snapDiv").reset();
+	jQuery("#snapCommentFormDiv").slideUp("fast");
+	jQuery("#snapBtnsDiv").slideDown("fast");
+	jQuery("#btn1").removeAttr("disabled");
+	jQuery("#btn2").removeAttr("disabled");
+	return false;
+}
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+//立刻拍照
+function d0shot(){
+	jQuery("#btn1").attr({"disabled":"disabled"});
+	jQuery("#btn2").attr({"disabled":"disabled"});
+	shot();
+}
 
-<h3>Authors and Contributors</h3>
+//延时拍照
+function d5shot(){
+	jQuery("#btn2").attr({"disabled":"disabled"});
+	jQuery("#btn1").attr({"disabled":"disabled"});
+	setTimeout("d()", 1000);
+}
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+//上传
+function upload(){
+	swfobject.getObjectById("snapDiv").upload();
+}
 
-<h3>Support or Contact</h3>
+function d(){
+	if (sec === 0){
+		shot();
+		jQuery("#btn2").attr({"value":"5秒自动拍照"});
+		sec = 5;
+	} else {
+		jQuery("#btn2").attr({"value":""+--sec+"秒自动拍照"});
+		setTimeout("d()", 1000);
+	}
+}
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
+//完成
+function complete(){
+	alert("ok");
+}
+
+//图片上传进度
+function progress(bytesLoaded,bytesTotal){
+	jQuery("#commentta").val(bytesLoaded);
+}
+
+function active(act){
+	if (act == "ok"){
+		jQuery("#snapBtnsDiv").slideDown("fast");
+	} else {
+		error("选择 允许 才可以在线拍摄照片,<a href='./index.html'>刷新</a>");
+	}
+}
+
+//错误
+function error(e){
+	alert(e);
+}
+
+</code></pre>
+		</section>
 
         <aside id="sidebar">
           <a href="https://github.com/code-huanglei/SimpleSnap/zipball/master" class="button">
@@ -68,7 +147,6 @@ $ git checkout gh-pages
 
           <p class="repo-owner"><a href="https://github.com/code-huanglei/SimpleSnap"></a> is maintained by <a href="https://github.com/code-huanglei">code-huanglei</a>.</p>
 
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
     </div>
